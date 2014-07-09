@@ -59,24 +59,32 @@
                 	t_isInit = true;
                     $('#q_report').q_report({
                         fileName : 'z_bcc5_rs',
-                        options : [{/*1*/
+                        options : [{/* [1]*/
+							type : '0',//數量的小數位數
+							name : 'mount_precision',
+							value : q_getPara('rc2.mountPrecision')
+						},{/* [2]*/
+							type : '0',//價格的小數位數
+							name : 'price_precision',
+							value : q_getPara('rc2.pricePrecision')
+						},{/*1 [3][4]*/
                             type : '2',
                             name : 'bcc',
                             dbf : 'bcc',
                             index : 'noa,product',
                             src : 'bcc_b.aspx'
-                        },{/*2*/
+                        },{/*2 [5]*/
 							type : '6',
 							name : 'enddate'
-						},{/*3*/
+						},{/*3 [6]*/
 							type : '5',
 							name : 'xstore',
 							value : t_store.split(',')
-						},{/*4*/
+						},{/*4 [7]*/
 							type : '8',
 							name : 'xpart',
 							value : t_part.split(',')
-						},{/*4*/
+						},{/*5 [8]*/
 							type : '5',
 							name : 'xtypea',
 							value : t_typea.split(',')
