@@ -32,7 +32,11 @@
 			brwList = [];
 			brwNowPage = 0;
 			brwKey = 'noa';
-			aPop = new Array();
+			aPop = new Array(
+                ['txtAddr_fact', '', 'view_road', 'memo,zipcode', '0txtAddr_fact,txtZip_fact', 'road_b.aspx']
+                ,['txtAddr_comp', '', 'view_road', 'memo,zipcode', '0txtAddr_comp,txtZip_comp', 'road_b.aspx']
+                ,['txtAddr_invo', '', 'view_road', 'memo,zipcode', '0txtAddr_invo,txtZip_invo', 'road_b.aspx']
+            );
 			$(document).ready(function() {
 				bbmKey = ['noa'];
 				bbsKey = ['noa', 'noq'];
@@ -410,9 +414,9 @@
                         <td><input id="txtUacc1" type="text" class="txt c1" /></td>
                     </tr>
                     <tr>
-                        <td><span> </span><a id='lblAddr_conn' class="lbl"> </a></td>
+                        <td><span> </span><a id='lblAddr_comp' class="lbl"> </a></td>
                         <td><input id="txtZip_conn" type="text" class="txt c1" /></td>
-                        <td colspan="3"><input id="txtAddr_conn" type="text" class="txt c1" /></td>
+                        <td colspan="3"><input id="txtAddr_comp" type="text" class="txt c1" /></td>
                         <td><span> </span><a id='lblUacc2' class="lbl"> </a></td>
                         <td><input id="txtUacc2" type="text" class="txt c1" /></td>
                     </tr>
