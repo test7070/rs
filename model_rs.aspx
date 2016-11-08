@@ -692,7 +692,7 @@
 						<input id="txtNoq.*" type="text" style="display: none;" />
 					</td>
 					<td><input id="txtProductno.*" type="text" style="width:98%;"/></td>
-					<td><select id="cmbModel.*" class="txt c1"> </select>/select></td>
+					<td><select id="cmbModel.*" class="txt c1"> </select></td>
 					<td>
 						<input id="txtWheel.*" type="text" class="txt c1" style="width:75%;"/>	
 						<select id="combWheel.*" class="txt c1" style="width:20%;"> </select>
