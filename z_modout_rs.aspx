@@ -60,11 +60,11 @@
 				q_getFormat();
 				q_langShow();   
                 
-                var t_noa=q_getHref()[1]=='undefined'?'':q_getHref()[1];
+                var t_noa=q_getHref()[1]==undefined?'':q_getHref()[1];
                 $('#txtXnoa1').val(t_noa);
                 $('#txtXnoa2').val(t_noa);
                 
-                var t_modnoa=q_getHref()[3]=='undefined'?'':q_getHref()[3];
+                var t_modnoa=q_getHref()[3]==undefined?'':q_getHref()[3];
                 $('#txtXmodnoa1').val(t_modnoa);
                 $('#txtXmodnoa2').val(t_modnoa);
                 

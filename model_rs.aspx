@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -611,8 +611,8 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:80px; color:black;"><a id='vewNoa'></a></td>
-						<td align="center" style="width:80px; color:black;"><a id='vewTgg'></a></td>
+						<td align="center" style="width:80px; color:black;"><a id='vewNoa'> </a></td>
+						<td align="center" style="width:80px; color:black;"><a id='vewTgg'> </a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" /></td>
@@ -624,17 +624,17 @@
 			<div class='dbbm'>
 				<table class="tbbm"  id="tbbm">
 					<tr style="height:1px;">
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>			
-						<td class="tdZ"></td>
+						<td> </td>
+						<td> </td>
+						<td> </td>
+						<td> </td>
+						<td> </td>
+						<td> </td>			
+						<td class="tdZ"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblNoa' class="lbl" ></a></td>
-						<td><input id="txtNoa" type="text" class="txt  c1"/></td>
+						<td><span> </span><a id='lblNoa' class="lbl" > </a></td>
+						<td><input id="txtNoa" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblTgg" class="lbl btn"> </a></td>
 						<td colspan="3">
 							<input id="txtTggno"  type="text" style="width:32%;"/>
@@ -642,31 +642,31 @@
 						</td>		
 					</tr>					
 					<tr>
-						<td><span> </span><a id='lblSpec' class="lbl"></a></td>
+						<td><span> </span><a id='lblSpec' class="lbl"> </a></td>
 						<td><input id="txtSpec" type="text" class="txt c1 "/></td>
-						<td><span> </span><a id='lblFrame' class="lbl"></a></td>
+						<td><span> </span><a id='lblFrame' class="lbl"> </a></td>
 						<td><input id="txtFrame" type="text" class="c1 num"/></td>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td><input id="txtDatea" type="text" class="txt c1 "/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblTube' class="lbl"></a></td>
+						<td><span> </span><a id='lblTube' class="lbl"> </a></td>
 						<td><input id="txtTube" type="text" class="txt c1 "/></td>
 						<td><span> </span><a id='lblHeart' class="lbl"> </a></td>
 						<td><input id="txtHeart" type="text" class="c1 num"/></td>
-						<td><span> </span><a id='lblSum' class="lbl"></a></td>
+						<td><span> </span><a id='lblSum' class="lbl"> </a></td>
 						<td><input id="textSum"  type="text"  class="num c1" style="width:95%"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblUsetype' class="lbl"></a></td>						
-						<td><select id="cmbUsetype"  class="txt c1"></select></td>
+						<td><span> </span><a id='lblUsetype' class="lbl"> </a></td>						
+						<td><select id="cmbUsetype"  class="txt c1"> </select></td>
 						<td><span> </span><a id='lblSaver' class="lbl"> </a></td>
 						<td><input id="txtSaver" type="text" class="txt c1 "/></td>						
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblWorker' class="lbl"></a></td>
+						<td><span> </span><a id='lblWorker' class="lbl"> </a></td>
 						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id='lblWorker2' class="lbl"></a></td>
+						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
 						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
 					</tr>
 				</table>
@@ -678,13 +678,13 @@
 					<td  align="center" style="width:1%;">
 						<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
 					</td>
-					<td align="center" style="width:20%;"><a id='lblProductno_s'></a></td>
-					<td align="center" style="width:10%;"><a id='lblModelre_s'></a></td>
-					<td align="center" style="width:12%;"><a id='lblWheel_s'></a></td>	
-					<td align="center" style="width:12%;"><a id='lblNumber_s'></a></td>				
-					<td align="center" style="width:10%;"><a id='lblBottom_s'></a></td>
-					<td align="center" style="width:10%;"><a id='lblMount'></a></td>				
-					<td align="center" ><a id='lblMemors2_s'></a></td>
+					<td align="center" style="width:20%;"><a id='lblProductno_s'> </a></td>
+					<td align="center" style="width:10%;"><a id='lblModelre_s'> </a></td>
+					<td align="center" style="width:12%;"><a id='lblWheel_s'> </a></td>	
+					<td align="center" style="width:12%;"><a id='lblNumber_s'> </a></td>				
+					<td align="center" style="width:10%;"><a id='lblBottom_s'> </a></td>
+					<td align="center" style="width:10%;"><a id='lblMount'> </a></td>				
+					<td align="center" ><a id='lblMemors2_s'> </a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center" >
@@ -692,17 +692,17 @@
 						<input id="txtNoq.*" type="text" style="display: none;" />
 					</td>
 					<td><input id="txtProductno.*" type="text" style="width:98%;"/></td>
-					<td><select id="cmbModel.*" type="text" class="txt c1"/select></td>
+					<td><select id="cmbModel.*" class="txt c1"> </select>/select></td>
 					<td>
 						<input id="txtWheel.*" type="text" class="txt c1" style="width:75%;"/>	
-						<select id="combWheel.*" type="text" class="txt c1" style="width:20%;"/select>
+						<select id="combWheel.*" class="txt c1" style="width:20%;"> </select>
 					</td>				
 					<td>
 						<input id="txtNumber.*" type="text" class="txt c1" style="width:75%;"/>
-						<select id="combNumber.*" type="text" class="txt c1" style="width:20%;"/select>
+						<select id="combNumber.*" class="txt c1" style="width:20%;"> </select>
 					</td>						
-					<td ><input id="txtBottom.*" type="text" class="num c1" style="width:98%;" /></td>
-					<td ><input id="txtMount.*" type="text" class="num c1" style="width:98%;" /></td>
+					<td ><input id="txtBottom.*" type="text" class="num c1" style="width:98%;"/></td>
+					<td ><input id="txtMount.*" type="text" class="num c1" style="width:98%;"/></td>
 					<td><input id="txtMemo2.*" type="text" style="width:98%;" /></td>
 				</tr>
 			</table>

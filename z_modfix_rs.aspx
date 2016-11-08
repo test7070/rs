@@ -40,7 +40,7 @@
 				q_getFormat();
 				q_langShow();   
                 
-                var t_noa=q_getHref()[1]=='undefined'?'':q_getHref()[1];
+                var t_noa=q_getHref()[1]==undefined?'':q_getHref()[1];
                 $('#txtXnoa1').val(t_noa);
                 $('#txtXnoa2').val(t_noa);
                 
