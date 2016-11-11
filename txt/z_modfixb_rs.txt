@@ -13,6 +13,9 @@ declare @tmp table(
 	rec int,
 	noa nvarchar(30),
 	datea nvarchar(10),
+	partno nvarchar(50),
+	part nvarchar(50),
+	paperno nvarchar(50),
 	deviceno nvarchar(10),
 	device nvarchar(50),
 	ordeno nvarchar(20),
@@ -48,7 +51,8 @@ declare @tmp table(
 )
 
 insert into @tmp
-select '0',ROW_NUMBER() over (partition by a.noa order by a.noa),a.noa,a.datea,a.deviceno,a.device,a.ordeno,a.description,a.way,a.contents,
+select '0',ROW_NUMBER() over (partition by a.noa order by a.noa),a.noa,a.datea,
+       a.partno,a.part,a.paperno,a.deviceno,a.device,a.ordeno,a.description,a.way,a.contents,
 	   dbo.split(a.bdate,'/',0),dbo.split(a.bdate,'/',1),dbo.split(a.bdate,'/',2),dbo.split(a.btime,':',0),dbo.split(a.btime,':',1),
 	   dbo.split(a.edate,'/',0),dbo.split(a.edate,'/',1),dbo.split(a.edate,'/',2),dbo.split(a.etime,':',0),dbo.split(a.etime,':',1),a.worker,
 	   dbo.split(a.badddate,'/',0),dbo.split(a.badddate,'/',1),dbo.split(a.badddate,'/',2),dbo.split(a.baddtime,':',0),dbo.split(a.baddtime,':',1),
@@ -118,7 +122,7 @@ while(@i < 3)
 begin
 	insert into @tmp
 	select 
-		gno,@i+1,noa,datea,deviceno,device,ordeno,description,way,contents,byy,bmm,bdd,bhh,bmi,eyy,emm,edd,ehh,emi,worker,
+		gno,@i+1,noa,datea,partno,part,paperno,deviceno,device,ordeno,description,way,contents,byy,bmm,bdd,bhh,bmi,eyy,emm,edd,ehh,emi,worker,
 		baddyy,baddmm,badddd,baddhh,baddmi,eaddyy,eaddmm,eadddd,eaddhh,eaddmi,addworker,product,retired,''
 	from @tmp where rec = @i
 	
