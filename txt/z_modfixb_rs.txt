@@ -46,6 +46,9 @@ declare @tmp table(
 	addworker nvarchar(20),
 	product nvarchar(max),
 	retired nvarchar(max),
+	qworker1 nvarchar(20),
+	qworker2 nvarchar(20),
+	qworker3 nvarchar(20),
 	
 	pageword nvarchar(20)
 )
@@ -57,7 +60,8 @@ select '0',ROW_NUMBER() over (partition by a.noa order by a.noa),a.noa,a.datea,
 	   dbo.split(a.edate,'/',0),dbo.split(a.edate,'/',1),dbo.split(a.edate,'/',2),dbo.split(a.etime,':',0),dbo.split(a.etime,':',1),a.worker,
 	   dbo.split(a.badddate,'/',0),dbo.split(a.badddate,'/',1),dbo.split(a.badddate,'/',2),dbo.split(a.baddtime,':',0),dbo.split(a.baddtime,':',1),
 	   dbo.split(a.eadddate,'/',0),dbo.split(a.eadddate,'/',1),dbo.split(a.eadddate,'/',2),dbo.split(a.eaddtime,':',0),dbo.split(a.eaddtime,':',1),a.addworker,
-	   b.productno+'、'+b.product+'、'+b.tgg+'、'+CAST(b.mount as nvarchar(10))+'、'+CAST(b.price as nvarchar(10))+'、'+CAST(b.money as nvarchar(10)),b.retired,''
+	   b.productno+'、'+b.product+'、'+b.tgg+'、'+CAST(b.mount as nvarchar(10))+'、'+CAST(b.price as nvarchar(10))+'、'+CAST(b.money as nvarchar(10)),b.retired
+	   ,a.qworker1,a.qworker2,a.qworker3,''
 from modfixb a
 left join modfixbs b on a.noa = b.noa
 where(a.noa between @t_bnoa and @t_enoa)
@@ -164,11 +168,9 @@ declare @tmp table(
 
 insert into @tmp
 select '0',1,a.noa,a.tgg,a.years,a.saver,b.datea,c.product+'*'+CAST(c.mount as nvarchar(10)),way,c.tggno,c.money,b.worker,c.tggno,c.money
-from modeq a
-left join modfixb b on a.noa = b.deviceno
-left join modfixbs c on b.noa = c.noa
-where(a.noa between @t_bdno and @t_edno) and
-	 exists (select * from modfixb  where noa = b.noa)
+from modfixb b left join modfixbs c on b.noa = c.noa
+left join modeq a on a.noa = b.deviceno
+where(b.deviceno between @t_bdno and @t_edno)
 
 update @tmp set tgg1 = case when CHARINDEX('委外',way) > 0 then tgg1 else null end,
 				money1 = case when CHARINDEX('委外',way) > 0 then money1 else null end,
