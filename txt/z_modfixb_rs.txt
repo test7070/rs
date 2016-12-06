@@ -18,6 +18,7 @@ declare @tmp table(
 	paperno nvarchar(50),
 	deviceno nvarchar(10),
 	device nvarchar(50),
+	mechset nvarchar(50),
 	ordeno nvarchar(20),
 	description nvarchar(50),
 	way nvarchar(30),
@@ -54,8 +55,8 @@ declare @tmp table(
 )
 
 insert into @tmp
-select '0',ROW_NUMBER() over (partition by a.noa order by a.noa),a.noa,a.datea,
-       a.partno,a.part,a.paperno,a.deviceno,a.device,a.ordeno,a.description,a.way,a.contents,
+select '0',ROW_NUMBER() over (partition by a.noa,b.mechset order by a.noa,b.mechset),a.noa,a.datea,
+       a.partno,a.part,a.paperno,a.deviceno,a.device,b.mechset,a.ordeno,a.description,a.way,a.contents,
 	   dbo.split(a.bdate,'/',0),dbo.split(a.bdate,'/',1),dbo.split(a.bdate,'/',2),dbo.split(a.btime,':',0),dbo.split(a.btime,':',1),
 	   dbo.split(a.edate,'/',0),dbo.split(a.edate,'/',1),dbo.split(a.edate,'/',2),dbo.split(a.etime,':',0),dbo.split(a.etime,':',1),a.worker,
 	   dbo.split(a.badddate,'/',0),dbo.split(a.badddate,'/',1),dbo.split(a.badddate,'/',2),dbo.split(a.baddtime,':',0),dbo.split(a.baddtime,':',1),
@@ -69,6 +70,8 @@ where(a.noa between @t_bnoa and @t_enoa)
 declare @rec int
 declare @noa nvarchar(30)
 declare @xnoa nvarchar(30)
+declare @mechset nvarchar(50)
+declare @xmechset nvarchar(50)
 declare @product nvarchar(max)
 declare @retired nvarchar(max)
 declare @max int
@@ -78,15 +81,15 @@ declare @rstr nvarchar(max)
 set @xnoa = 'xxxxxx'
 
 declare cursor_table cursor for 
-select rec,noa,product,retired from @tmp
+select rec,noa,product,retired,mechset from @tmp order by noa,mechset
 open cursor_table 
 fetch next from cursor_table 
-into @rec,@noa,@product,@retired
+into @rec,@noa,@product,@retired,@mechset
 while(@@FETCH_STATUS <> -1) 
 begin
-	if(@noa != @xnoa)
+	if(@noa != @xnoa or @mechset!=@xmechset)
 	begin
-		set @max = (select MAX(rec) from @tmp where noa = @noa)
+		set @max = (select MAX(rec) from @tmp where noa = @noa and mechset=@mechset)
 		set @pstr = ''
 		set @rstr = ''
 	end
@@ -99,14 +102,15 @@ begin
 	else
 	begin 
 		set @pstr = @pstr + @product
-		update @tmp set product = @pstr where noa = @noa
+		update @tmp set product = @pstr where noa = @noa and mechset=@mechset
 		set @rstr = @rstr + case when @retired = 1 then '&#8744' else '&nbsp' end	
-		update @tmp set retired = @rstr where noa = @noa
+		update @tmp set retired = @rstr where noa = @noa and mechset=@mechset
 	end	
 	
 	set @xnoa = @noa
+	set @xmechset=@mechset
 	fetch next from cursor_table 
-	into @rec,@noa,@product,@retired
+	into @rec,@noa,@product,@retired,@mechset
 end 
 close cursor_table 
 deallocate cursor_table 
@@ -117,8 +121,8 @@ delete @tmp where rec > 1
 update @tmp set way = case when CHARINDEX('委外',way)>0 then '&#9745委外<br>&#9744自修' else '&#9744委外<br>&#9745自修' end
 
 --換頁->1維修單號(noa)1頁 gno = '1'
-insert into @tmp(gno,rec,noa)
-select DISTINCT '1',1,noa from @tmp
+insert into @tmp(gno,rec,noa,mechset)
+select DISTINCT '1',1,noa,mechset from @tmp
 
 /*declare @i int = 1
 declare @pagestr nvarchar(50) = '第一聯<br>：<br>申請聯,第二聯<br>：<br>財會聯,第三聯<br>：<br>維修聯'
@@ -137,7 +141,7 @@ update @tmp set pageword = case when rec = 1 then dbo.split(@pagestr,',',0)
 								when rec = 2 then dbo.split(@pagestr,',',1)
 								when rec = 3 then dbo.split(@pagestr,',',2) end*/
 								
-select *,deviceno dno from @tmp order by noa,rec,gno;
+select *,deviceno dno from @tmp order by noa,mechset,rec,gno;
 --*******************************************************************************
 z_modfixb_rs02:--z_modfixb_rs02
 
@@ -153,10 +157,13 @@ declare @tmp table(
 	gno nvarchar(1),
 	rec int,
 	noa nvarchar(50),
+	device nvarchar(50),
 	tgg nvarchar(90),
 	years nvarchar(50),
+	part nvarchar(50),
 	saver nvarchar(50),
 	datea nvarchar(10),
+	mechset nvarchar(50),
 	product nvarchar(100),
 	way nvarchar(10), 
 	tgg1 nvarchar(90),
@@ -167,7 +174,7 @@ declare @tmp table(
 )
 
 insert into @tmp
-select '0',1,a.noa,a.tgg,a.years,a.saver,b.datea,c.product+'*'+CAST(c.mount as nvarchar(10)),way,c.tggno,c.money,b.worker,c.tggno,c.money
+select '0',1,b.deviceno,b.device,a.tgg,a.years,b.part,a.saver,b.datea,c.mechset,c.product+'*'+CAST(c.mount as nvarchar(10)),way,c.tgg,c.money,b.worker,c.tggno,c.money
 from modfixb b left join modfixbs c on b.noa = c.noa
 left join modeq a on a.noa = b.deviceno
 where(b.deviceno between @t_bdno and @t_edno)
@@ -239,6 +246,7 @@ declare @tmp table(
 	rec int,
 	deviceno nvarchar(10),
 	device nvarchar(50),
+	mechset nvarchar(50),
 	productno nvarchar(30),
 	product nvarchar(100),
 	description nvarchar(50),
@@ -249,7 +257,7 @@ declare @tmp table(
 )
 
 insert into @tmp
-select '0',ROW_NUMBER() over (order by a.deviceno),a.deviceno,a.device,b.productno,b.product,a.description,a.way,a.contents,b.retired,b.mount
+select '0',ROW_NUMBER() over (order by a.deviceno),a.deviceno,a.device,b.mechset,b.productno,b.product,a.description,a.way,a.contents,b.retired,b.mount
 from modfixb a
 left join modfixbs b on a.noa = b.noa
 where(a.deviceno between @t_bdno and @t_edno)
