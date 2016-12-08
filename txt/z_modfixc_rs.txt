@@ -59,7 +59,7 @@ left join modfixcs b on a.noa=b.noa
 where a.noa between @t_bnoa and @t_enoa and a.datea between @t_bdate and @t_edate and (LEN(@t_frame)=0 or b.frame=@t_frame)
 group by a.noa,a.modnoa,a.mech,b.code,b.detail,b.frame,b.worktype,b.worktype2
 
-update @tmp set loss = brepair-erepair, enbottom = bottom+erepair
+update @tmp set loss = round(brepair-erepair,4), enbottom = round(bottom+erepair,4)
 
 declare @noa nvarchar(50)
 declare @cnt  int
