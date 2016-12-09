@@ -682,7 +682,7 @@ while(@j < 9)
 begin
 	set @cmd = @cmd + "(select SUM(ISNULL(fixmount,0)) 
 						from modfixcs 
-						where (worktype='加班')and						  
+						where (worktype='加班' or worktype2='加班' or worktype3='加班' or worktype4='加班')and						  
 							  (mech=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
 							  (LEFT(bdate,9)='"+@t_date+"' and LEFT(edate,9)='"+@t_date+"')   
 						group by mech),"
@@ -699,7 +699,7 @@ while(@j < 9)
 begin
 	set @cmd = @cmd + "(select SUM(ISNULL(fixmount,0)) 
 						from modfixcs 
-						where (worktype='加班')and
+						where (worktype='加班' or worktype2='加班' or worktype3='加班' or worktype4='加班')and
 							  (mech=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
 							  (LEFT(bdate,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
 						group by mech),"
@@ -714,15 +714,42 @@ set @gno = @gno+1
 set @cmd = "select "+CAST(@gno as nvarchar(5))+",7,"
 while(@j < 9)
 begin
-	set @cmd = @cmd + "(select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(5,1))) from(
-							select mech,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+btime bdate,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+etime edate
+	set @cmd = @cmd + "isnull((select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(5,1))) from(
+							select mech,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+btime bdate,CAST(dbo.ChineseEraName2AD(LEFT(edate,9))as nvarchar(10))+' '+etime edate
 							from modfixcs 
 							where (worktype='加班')and
 								  (fixmount > 0) and 	 	
 								  (mech=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
 								  (LEFT(bdate,9)='"+@t_date+"' and LEFT(edate,9)='"+@t_date+"')
 							)t
-						group by mech),"
+						group by mech),0)
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate2,edate2)/60.0 as numeric(5,1))) from(
+							select mech2,CAST(dbo.ChineseEraName2AD(LEFT(bdate2,9))as nvarchar(10))+' '+btime2 bdate2,CAST(dbo.ChineseEraName2AD(LEFT(edate2,9))as nvarchar(10))+' '+etime2 edate2
+							from modfixcs 
+							where (worktype2='加班')and
+								  (fixmount > 0) and 	 	
+								  (mech2=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
+								  (LEFT(bdate2,9)='"+@t_date+"' and LEFT(edate2,9)='"+@t_date+"')
+							)t
+						group by mech2),0)
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate3,edate3)/60.0 as numeric(5,1))) from(
+							select mech3,CAST(dbo.ChineseEraName2AD(LEFT(bdate3,9))as nvarchar(10))+' '+btime3 bdate3,CAST(dbo.ChineseEraName2AD(LEFT(edate3,9))as nvarchar(10))+' '+etime3 edate3
+							from modfixcs 
+							where (worktype3='加班')and
+								  (fixmount > 0) and 	 	
+								  (mech3=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
+								  (LEFT(bdate3,9)='"+@t_date+"' and LEFT(edate3,9)='"+@t_date+"')
+							)t
+						group by mech3),0)
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate4,edate4)/60.0 as numeric(5,1))) from(
+							select mech4,CAST(dbo.ChineseEraName2AD(LEFT(bdate4,9))as nvarchar(10))+' '+btime4 bdate4,CAST(dbo.ChineseEraName2AD(LEFT(edate4,9))as nvarchar(10))+' '+etime4 edate4
+							from modfixcs 
+							where (worktype4='加班')and
+								  (fixmount > 0) and 	 	
+								  (mech4=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
+								  (LEFT(bdate4,9)='"+@t_date+"' and LEFT(edate4,9)='"+@t_date+"')
+							)t
+						group by mech4),0),"
 	set @j = @j+1
 end
 set @cmd = LEFT(@cmd,LEN(@cmd)-1) 
@@ -735,15 +762,42 @@ set @gno = @gno+1
 set @cmd = "select "+CAST(@gno as nvarchar(5))+",8,"
 while(@j < 9)
 begin
-	set @cmd = @cmd + "(select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(5,1))) from(
-							select mech,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+btime bdate,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+etime edate
+	set @cmd = @cmd + "isnull((select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(5,1))) from(
+							select mech,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+btime bdate,CAST(dbo.ChineseEraName2AD(LEFT(edate,9))as nvarchar(10))+' '+etime edate
 							from modfixcs 
 							where (worktype='加班')and
 								  (fixmount > 0) and 	
 								  (mech=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
 								  (LEFT(bdate,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
 							)t
-						group by mech),"
+						group by mech),0)
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate2,edate2)/60.0 as numeric(5,1))) from(
+							select mech2,CAST(dbo.ChineseEraName2AD(LEFT(bdate2,9))as nvarchar(10))+' '+btime2 bdate2,CAST(dbo.ChineseEraName2AD(LEFT(edate2,9))as nvarchar(10))+' '+etime2 edate2
+							from modfixcs 
+							where (worktype2='加班')and
+								  (fixmount > 0) and 	
+								  (mech2=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
+								  (LEFT(bdate2,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
+							)t
+						group by mech2),0)
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate3,edate3)/60.0 as numeric(5,1))) from(
+							select mech3,CAST(dbo.ChineseEraName2AD(LEFT(bdate3,9))as nvarchar(10))+' '+btime3 bdate3,CAST(dbo.ChineseEraName2AD(LEFT(edate3,9))as nvarchar(10))+' '+etime3 edate3
+							from modfixcs 
+							where (worktype3='加班')and
+								  (fixmount > 0) and 	
+								  (mech3=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
+								  (LEFT(bdate3,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
+							)t
+						group by mech3),0)
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate4,edate4)/60.0 as numeric(5,1))) from(
+							select mech4,CAST(dbo.ChineseEraName2AD(LEFT(bdate4,9))as nvarchar(10))+' '+btime4 bdate4,CAST(dbo.ChineseEraName2AD(LEFT(edate4,9))as nvarchar(10))+' '+etime4 edate4
+							from modfixcs 
+							where (worktype4='加班')and
+								  (fixmount > 0) and 	
+								  (mech4=dbo.split('"+@mech+"',',',"+CAST(@j as nvarchar(5))+")) and
+								  (LEFT(bdate4,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
+							)t
+						group by mech4),0),"
 	set @j = @j+1
 end
 set @cmd = LEFT(@cmd,LEN(@cmd)-1) 
