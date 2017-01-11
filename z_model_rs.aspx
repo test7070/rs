@@ -66,12 +66,16 @@
                 
 				$('#txtXdate1').mask(r_picd);
                 $('#txtXdate2').mask(r_picd);
+				$('#txtXdate1').val(q_date().substr(0, r_lenm)+'/01');
+                $('#txtXdate2').val(q_cdn(q_cdn(q_date().substr(0, r_lenm)+'/01',35).substr(0,r_lenm)+'/01',-1));              
+               
                
                 if (q_getId()[3] != undefined && q_getId()[3].length>0) {
-                    $('#txtXnoa').val(q_getId()[3].replace('noa=', ''));
-                }else{
-                	//$('#txtXdate1').val(q_date().substr(0,r_lenm)+'/01');
-	            	//$('#txtXdate2').val(q_cdn(q_cdn(q_date().substr(0,r_lenm)+'/01',45).substr(0,r_lenm)+'/01',-1));
+                    $('#txtXnoa1').val(q_getId()[3].replace('noa=', ''));
+                    $('#txtXnoa2').val(q_getId()[3].replace('noa=', ''));
+                }else if (parent.q_name=='model'){
+                	$('#txtXnoa1').val(parent.$('#txtNoa').val());
+                    $('#txtXnoa2').val(parent.$('#txtNoa').val());
                 }
             }
 

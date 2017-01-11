@@ -90,7 +90,7 @@ begin
 		end
 		set @cnt  = (select COUNT(*) from @tmp where gno = '2' and noa = @noa)
 		set @cnt1 = (select COUNT(*) from @tmp where gno = '1' and noa = @noa)
-		set @max  = (select MAX(rec) from @tmp where gno = '1' and noa = @noa)
+		set @max  = isnull((select MAX(rec) from @tmp where gno = '1' and noa = @noa),0)
 		set @i = 0
 		while(@i < @cnt-@cnt1)
 		begin
