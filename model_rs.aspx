@@ -69,10 +69,6 @@
 					}
 				});
 				q_cmbParse("cmbModel",q_getPara('model.type'),'s');
-
-				
-				
-		
 			}
 
 			function q_boxClose(s2) {
@@ -434,6 +430,27 @@
 
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+				if(q_cur==2){
+					if(q_getPara('sys.edate')>=$('#txtDatea').val()){
+						for (var j = 0; j < q_bbsCount; j++) {
+							$('#cmbModel_'+j).attr("disabled","disabled");
+							$('#combWheel_'+j).attr("disabled","disabled");
+							$('#combNumber_'+j).attr("disabled","disabled");
+							$('#txtNumber_'+j).attr("disabled","disabled");
+							$('#txtMount_'+j).attr("disabled","disabled");
+							$('#txtMemo2_'+j).attr("disabled","disabled");
+						}
+					}else{
+						for (var j = 0; j < q_bbsCount; j++) {
+							$('#cmbModel_'+j).removeAttr("disabled");
+							$('#combWheel_'+j).removeAttr("disabled");
+							$('#combNumber_'+j).removeAttr("disabled");
+							$('#txtNumber_'+j).removeAttr("disabled");
+							$('#txtMount_'+j).removeAttr("disabled");
+							$('#txtMemo2_'+j).removeAttr("disabled");
+						}
+					}
+				}
 			}
 
 			function btnMinus(id) {
