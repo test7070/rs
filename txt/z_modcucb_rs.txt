@@ -27,6 +27,7 @@ create table #tmp(
 	mech  nvarchar(30),
 	spec  nvarchar(30),
 	mount float,
+	worker nvarchar(50),
 	memo  nvarchar(max)
 )
 insert into #tmp
@@ -39,13 +40,13 @@ select
 		 when b.mech2 = dbo.split(@mechkind,',',5) then 5
 		 when b.mech2 = dbo.split(@mechkind,',',6) then 6
 		 when b.mech2 = dbo.split(@mechkind,',',7) then 7 end,
-	b.mech2,b.mech,b.spec,ISNULL(b.mount,0),''
+	b.mech2,b.mech,b.spec,ISNULL(b.mount,0),b.worker,''
 from modcucb a
 left join modcucbs b on a.noa = b.noa
 where b.datea between @t_bdate and @t_edate
 
 --memo=規格+數量+機台
-update #tmp set memo = '　'+mech+'<br>'+'　'+spec+'<br>'+'　'+CAST(mount as nvarchar(20))
+update #tmp set memo = '　'+isnull(mech,'')+'<br>'+'　'+isnull(spec,'')+'<br>'+'　'+CAST(mount as nvarchar(50))+'<br>'+'　'+isnull(worker,'')
 
 create table #result(
 	gno nvarchar(1),

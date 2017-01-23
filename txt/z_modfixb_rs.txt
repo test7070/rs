@@ -160,7 +160,9 @@ declare @tmp table(
 	device nvarchar(50),
 	tgg nvarchar(90),
 	years nvarchar(50),
+	partno nvarchar(50),
 	part nvarchar(50),
+	qworker3 nvarchar(50),
 	saver nvarchar(50),
 	datea nvarchar(10),
 	mechset nvarchar(50),
@@ -174,14 +176,16 @@ declare @tmp table(
 )
 
 insert into @tmp
-select '0',1,b.deviceno,b.device,a.tgg,a.years,b.part,a.saver,b.datea,c.mechset,c.product+'*'+CAST(c.mount as nvarchar(10)),way,c.tgg,c.money,b.worker,c.tggno,c.money
+select '0',1,b.deviceno,b.device,a.tgg,a.years,b.partno,b.part,b.qworker3,a.saver,b.datea,c.mechset,c.product+'*'+CAST(c.mount as nvarchar(10)),way,c.tgg,c.money,b.worker,c.tgg,c.money
 from modfixb b left join modfixbs c on b.noa = c.noa
 left join modeq a on a.noa = b.deviceno
 where(b.deviceno between @t_bdno and @t_edno)
 
-update @tmp set tgg1 = case when CHARINDEX('委外',way) > 0 then tgg1 else null end,
-				money1 = case when CHARINDEX('委外',way) > 0 then money1 else null end,
-				worker1 = case when CHARINDEX('委外',way) > 0 then worker1 else null end			
+update @tmp set tgg1 = case when CHARINDEX('委外',way) > 0 then null else tgg1 end,
+				money1 = case when CHARINDEX('委外',way) > 0 then null else money1 end,
+				worker1 = case when CHARINDEX('委外',way) > 0 then null else worker1 end,
+				tgg2 = case when CHARINDEX('委外',way) > 0 then tgg2 else null end,
+				money2 = case when CHARINDEX('委外',way) > 0 then money2 else null end		
 
 --補空白行(25行)
 declare @noa nvarchar(50)
@@ -246,6 +250,8 @@ declare @tmp table(
 	rec int,
 	deviceno nvarchar(10),
 	device nvarchar(50),
+	partno nvarchar(50),
+	part nvarchar(50),
 	mechset nvarchar(50),
 	productno nvarchar(30),
 	product nvarchar(100),
@@ -257,7 +263,7 @@ declare @tmp table(
 )
 
 insert into @tmp
-select '0',ROW_NUMBER() over (order by a.deviceno),a.deviceno,a.device,b.mechset,b.productno,b.product,a.description,a.way,a.contents,b.retired,b.mount
+select '0',ROW_NUMBER() over (order by a.deviceno),a.deviceno,a.device,a.partno,a.part,b.mechset,b.productno,b.product,a.description,a.way,a.contents,b.retired,b.mount
 from modfixb a
 left join modfixbs b on a.noa = b.noa
 where(a.deviceno between @t_bdno and @t_edno)
