@@ -35,6 +35,10 @@
                     }, {/*1-1 [3][4]*/
                         type : '1',
                         name : 'date'
+                    }, {/* [5]*/
+                        type : '0',
+                        name : 'xmodfixcmech',
+                        value : q_getPara('modfixc.mech') 
                     }]
                 });
                 q_popAssign();

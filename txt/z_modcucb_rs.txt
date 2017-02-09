@@ -17,7 +17,8 @@ BEGIN
 	drop table #result
 END
 ----------------------------------------------------
-declare @mechkind nvarchar(max) = ',CNC電腦車床<br>台中精機V26,CNC電腦車床<br>台中精機V36,車床三興S128-60,車床三興26700,車床勝傑SJ460*1000G,車床大興TS15,鑽床'
+--declare @mechkind nvarchar(max) = ',CNC電腦車床<br>台中精機V26,CNC電腦車床<br>台中精機V36,車床三興S128-60,車床三興26700,車床勝傑SJ460*1000G,車床大興TS15,鑽床'
+declare @mechkind nvarchar(max) = '[5]'
 ----------------------------------------------------
 create table #tmp(
 	noa   nvarchar(30),
