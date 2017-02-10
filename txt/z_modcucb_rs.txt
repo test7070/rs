@@ -7,6 +7,8 @@ declare @t_edate nvarchar(10)
 
 set @t_bdate = case when '#non'=[3] then '' else [3] end
 set @t_edate = case when '#non'=[4] then '' else [4] end
+
+declare @t_len nvarchar(10)=[6]
 ---------------------------------------------------
 IF OBJECT_ID('tempdb..#tmp')is not null
 BEGIN
@@ -67,8 +69,11 @@ declare @weekday int
 declare @bdate nvarchar(10)
 declare @edate nvarchar(10)
 
-set @t_bdate = REPLACE(dbo.ChineseEraName2AD(@t_bdate),'-','/')
-set @t_edate = REPLACE(dbo.ChineseEraName2AD(@t_edate),'-','/')
+if(@t_len!=4)
+begin
+	set @t_bdate = REPLACE(dbo.ChineseEraName2AD(@t_bdate),'-','/')
+	set @t_edate = REPLACE(dbo.ChineseEraName2AD(@t_edate),'-','/')
+end
 set @bdate = @t_bdate
 	
 while(@bdate <= @t_edate) --日期判斷(星期一:@bdate星期日:@edate)
@@ -76,8 +81,13 @@ begin
 	set @weekday = (DATEPART(WeekDay,@bdate)-1)
 	set @bdate = CONVERT(char, DATEADD(DAY, 1-@weekday, @bdate), 111)
 	set @edate = CONVERT(char, DATEADD(DAY, 6, @bdate), 111)
-	set @bdate = dbo.AD2ChineseEraName(@bdate)
-	set @edate = dbo.AD2ChineseEraName(@edate)
+	
+	if(@t_len!=4)
+	begin
+		set @bdate = dbo.AD2ChineseEraName(@bdate)
+		set @edate = dbo.AD2ChineseEraName(@edate)
+	end
+	
 	--依日期&機台填入memo
 	declare @rec   int = 1
 	declare @datea nvarchar(10)
@@ -130,7 +140,14 @@ begin
 	deallocate cursor_table
 	
 	set @id = @id + 1
-	set @bdate = CONVERT(char, DATEADD(DAY, 7, dbo.ChineseEraName2AD(@bdate)), 111)
+	if(@t_len!=4)
+	begin
+		set @bdate = CONVERT(char, DATEADD(DAY, 7, dbo.ChineseEraName2AD(@bdate)), 111)
+	end
+	else
+	begin
+		set @bdate = CONVERT(char, DATEADD(DAY, 7, @bdate), 111)
+	end
 end
 --補空白行&換頁
 declare @max int 

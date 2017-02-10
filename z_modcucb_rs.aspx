@@ -39,6 +39,10 @@
                         type : '0',
                         name : 'xmodfixcmech',
                         value : q_getPara('modfixc.mech') 
+                    }, {/* [6]*/
+                        type : '0',
+                        name : 'xrlen',
+                        value : r_len 
                     }]
                 });
                 q_popAssign();
