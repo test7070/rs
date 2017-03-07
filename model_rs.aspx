@@ -54,6 +54,8 @@
 				var bbmMask = [['txtDatea', r_picd]];
 				q_mask(bbmMask);				
 				q_cmbParse("cmbUsetype", q_getPara('model.usetype'));
+				
+				q_sys=replaceAll(q_sys , 'sys.edate','sys.xdate');
 			
 				$('#txtNoa').change(function(e) {
 					$(this).val($.trim($(this).val()).toUpperCase());
