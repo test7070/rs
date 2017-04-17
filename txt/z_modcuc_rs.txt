@@ -23,11 +23,11 @@ create table #tmp(
 	memo nvarchar(max)
 )
 insert into #tmp
-select a.datea,b.device,b.memo
+select a.datea,b.workerno,b.memo
 from modcuc a
 left join modcucs b on a.noa = b.noa
 where(a.datea between @t_bdate and @t_edate)
-group by a.datea,b.device,b.memo
+group by a.datea,b.workerno,b.memo
 
 create table #result(
 	gno  nvarchar(1),
