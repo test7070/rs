@@ -35,6 +35,10 @@
                     }, {/*1-1 [3][4]*/
                         type : '1',
                         name : 'date'
+                    }, {/*1-2 [5]*/
+                        type : '5',
+                        name : 'xtypea',
+                        value: '1@員工,2@設備'.split(',')
                     }]
                 });
                 q_popAssign();

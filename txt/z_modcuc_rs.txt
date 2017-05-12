@@ -4,9 +4,11 @@ SET QUOTED_IDENTIFIER OFF
 
 declare @t_bdate nvarchar(10)
 declare @t_edate nvarchar(10)
+declare @t_typea nvarchar(10)
 
 set @t_bdate = case when '#non'=[3] then '' else [3] end
 set @t_edate = case when '#non'=[4] then '' else [4] end
+set @t_typea = case when '#non'=[5] then '1' else [5] end
 ---------------------------------------------------
 IF OBJECT_ID('tempdb..#tmp')is not null
 BEGIN
@@ -22,12 +24,24 @@ create table #tmp(
 	device nvarchar(50),
 	memo nvarchar(max)
 )
-insert into #tmp
-select a.datea,b.workerno,b.memo
-from modcuc a
-left join modcucs b on a.noa = b.noa
-where(a.datea between @t_bdate and @t_edate)
-group by a.datea,b.workerno,b.memo
+if(@t_typea='1')
+begin
+	insert into #tmp
+	select a.datea,b.workerno,b.memo
+	from modcuc a
+	left join modcucs b on a.noa = b.noa
+	where(a.datea between @t_bdate and @t_edate)
+	group by a.datea,b.workerno,b.memo
+end
+else
+begin
+	insert into #tmp
+	select a.datea,b.device,b.memo
+	from modcuc a
+	left join modcucs b on a.noa = b.noa
+	where(a.datea between @t_bdate and @t_edate)
+	group by a.datea,b.device,b.memo
+end
 
 create table #result(
 	gno  nvarchar(1),
