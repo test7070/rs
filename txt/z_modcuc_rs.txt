@@ -22,25 +22,26 @@ END
 create table #tmp(
 	datea nvarchar(10),
 	device nvarchar(50),
-	memo nvarchar(max)
+	memo nvarchar(max),
+	worker nvarchar(50)
 )
 if(@t_typea='1')
 begin
 	insert into #tmp
-	select a.datea,b.workerno,b.memo
+	select a.datea,b.workerno,b.memo,b.device
 	from modcuc a
 	left join modcucs b on a.noa = b.noa
 	where(a.datea between @t_bdate and @t_edate)
-	group by a.datea,b.workerno,b.memo
+	group by a.datea,b.workerno,b.memo,b.device
 end
 else
 begin
 	insert into #tmp
-	select a.datea,b.device,b.memo
+	select a.datea,b.device,b.memo,b.workerno
 	from modcuc a
 	left join modcucs b on a.noa = b.noa
 	where(a.datea between @t_bdate and @t_edate)
-	group by a.datea,b.device,b.memo
+	group by a.datea,b.device,b.memo,b.workerno
 end
 
 create table #result(
@@ -104,7 +105,7 @@ begin
 			set @rno = @rno + 1
 			set @icmd = @icmd+",device"+CAST(@rno as nvarchar(5))
 			set @hcmd = @hcmd+",'"+@device+"'"
-			set @scmd = @scmd+",stuff((select ','+memo from #tmp a where a.datea=b.datea and a.device='"+@device+"' FOR XML path('')),1,1,'')"
+			set @scmd = @scmd+",stuff((select ','+worker+' '+memo from #tmp a where a.datea=b.datea and a.device='"+@device+"' FOR XML path('')),1,1,'')"
 			set @pcmd = @pcmd+",''"
 
 			fetch next from cursor_table 

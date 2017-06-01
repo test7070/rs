@@ -183,7 +183,7 @@ where(b.deviceno between @t_bdno and @t_edno)
 
 update @tmp set tgg1 = case when CHARINDEX('委外',way) > 0 then null else tgg1 end,
 				money1 = case when CHARINDEX('委外',way) > 0 then null else money1 end,
-				worker1 = case when CHARINDEX('委外',way) > 0 then null else worker1 end,
+				worker1 = case when CHARINDEX('委外',way) > 0 then worker1 else worker1 end,
 				tgg2 = case when CHARINDEX('委外',way) > 0 then tgg2 else null end,
 				money2 = case when CHARINDEX('委外',way) > 0 then money2 else null end		
 
