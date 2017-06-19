@@ -51,7 +51,8 @@
 			var wheel2=q_getPara('model.wheeltype2');
 			function mainPost() {
 				q_getFormat();
-				var bbmMask = [['txtDatea', r_picd]];
+				bbmMask = [['txtDatea', r_picd]];
+				bbsMask = [['txtNob', r_picd]];
 				q_mask(bbmMask);				
 				q_cmbParse("cmbUsetype", q_getPara('model.usetype'));
 				
@@ -71,6 +72,33 @@
 					}
 				});
 				q_cmbParse("cmbModel",q_getPara('model.type'),'s');
+				
+				
+				$('#btnChgnoa').click(function() {
+					if(q_cur!=1 && q_cur!=2){
+						if($("input[name='chkchgnoa']:checked").length>0){
+							$('#divChangeno').show();
+						}else{
+							alert('請勾選表身的物品!!');
+						}
+					}
+				});
+				
+				$('#btnChangeno').click(function() {
+					//檢查模具編號是否存在
+					if(emp($('#textNoa').val())){
+						alert('請輸入模具編號!!');
+					}else if($('#textNoa').val()==$('#txtNoa').val()){
+						alert('模具編號相同!!');
+					}else{
+						t_where = "where=^^ noa='" + $('#textNoa').val() + "'^^";
+						q_gt('model', t_where, 0, 0, 0, "changeno_modelno", r_accy);
+					}
+				});
+				
+				$('#btnCloseChangno').click(function() {
+					$('#divChangeno').hide();
+				});
 			}
 
 			function q_boxClose(s2) {
@@ -103,14 +131,33 @@
 						break;
 					case 'checkProductno':
 						var as = _q_appendData("models", "", true);
-
-						
 						if (as[0] != undefined ) {
 							qPno=qPno+1;
 						}else
 							qPno=1;
 					
-						break;	
+						break;
+					case 'changeno_modelno':
+						var as = _q_appendData("model", "", true);
+						if (as[0] != undefined) {
+							if($("input[name='chkchgnoa']:checked").length>0){
+								var t_where='';
+								$("input[name='chkchgnoa']:checked").each(function(index) {
+									var n=$(this).attr('id').split('_')[1];
+									t_where=t_where+(t_where.length>0?'##':'')+$('#txtNoq_'+n).val();
+								});
+								if(t_where.length>0){
+									q_func('qtxt.query.chgnoa_rs', 'model.txt,chgnoa_rs,'+encodeURI($('#txtNoa').val())+';'+encodeURI($('#textNoa').val())+';'+encodeURI(t_where)+';'+encodeURI(r_userno)+';'+encodeURI(r_name));
+								}else{
+									alert('資料不正確!!');
+								}
+							}else{
+								alert('請勾選表身的物品!!');
+							}
+						} else {
+							alert('模具編號【' + $('#textNoa').val()+'】不存在!!');
+						}
+						break;
 					case q_name:
 						if (q_cur == 4)
 							q_Seek_gtPost();
@@ -147,8 +194,6 @@
 				} else {
 					wrServer(t_noa);
 				}
-				
-				
 			}
 
 			function _btnSeek() {
@@ -376,9 +421,9 @@
 						changeWheel(b_seq);
 						$('#txtWheel_'+b_seq).val(wheel);
 					});
-									
 				}
 				_bbsAssign();
+				refreshBbs();
 			}
 			
 
@@ -412,13 +457,16 @@
 					return;
 				}
 				q_nowf();
+				as['datea'] = abbm2['datea'];
 				return true;
 			}
 
 			function refresh(recno) {
 				_refresh(recno);		
 				refreshBbm();
+				refreshBbs();
 				sum();
+				$('#divChangeno').hide();
 			}
 
 			function refreshBbm() {
@@ -429,7 +477,18 @@
 				}
 				$('#textSum').css('color', 'green').css('background', 'RGB(237,237,237)').attr('readonly', 'readonly');
 			}
-
+			
+			function refreshBbs() {
+				$("input[name='chkchgnoa']").attr("disabled","disabled");
+				if(q_cur!=1 && q_cur!=2){
+					for (var j = 0; j < q_bbsCount; j++) {
+						if(!emp($('#txtProductno_'+j).val())){
+							$("#checkChgnoa_"+j).removeAttr("disabled");
+						}
+					}
+				}
+			}
+			
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
 				if(q_cur==2){
@@ -453,6 +512,9 @@
 						}
 					}
 				}
+				
+				$('#divChangeno').hide();
+				refreshBbs();
 			}
 
 			function btnMinus(id) {
@@ -506,6 +568,21 @@
 			function btnCancel() {
 				_btnCancel();
 			}
+			
+			function q_funcPost(t_func, result) {
+				if(t_func=='qtxt.query.chgnoa_rs'){
+					var as = _q_appendData("tmp0", "", true, true);
+					if(as[0]!=undefined){
+						alert('物品編號移動成功。');
+					}else{
+						alert('物品編號移動失敗。');
+					}
+					//重刷畫面
+					location.href =location.href;
+				}
+				
+			} //endfunction
+				
 		</script>
 		<style type="text/css">
 			#dmain {
@@ -625,6 +702,21 @@
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	>
 		<!--#include file="../inc/toolbar.inc"-->
+		<div id="divChangeno" style="display:none;position:absolute;top:215px;left:875px;width:300px;height:80px;background:RGB(237,237,237);">
+            <table style="border:3px solid gray; width:100%; height: 100%;">              
+                <tr>
+                    <td align="center" style="background-color: pink;"><label>模具編號</label></td>
+					<td align="center" style="background-color: pink;"><input type="text" id="textNoa" style="width:98%;" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center" style="background-color: pink;">
+                    	<input type="button" id="btnChangeno" style="width:80px;" value="移動" />
+                    	<input type="button" id="btnCloseChangno" style="width:80px;" value="關閉"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+		
 		<div id='dmain' >
 			<div class="dview" id="dview">
 				<table class="tview" id="tview">
@@ -687,12 +779,14 @@
 						<td><input id="txtWorker"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id='lblWorker2' class="lbl"> </a></td>
 						<td><input id="txtWorker2"  type="text"  class="txt c1"/></td>
+						<td> </td>
+						<td><input id="btnChgnoa" type="button" value="移動物品" /></td>
 					</tr>
 				</table>
 			</div>
 		</div>
 		<div class='dbbs'>
-			<table id="tbbs" class='tbbs' style="width: 1050px;">
+			<table id="tbbs" class='tbbs' style="width: 1200px;">
 				<tr style="color:white; background:#003366;">
 					<td  align="center" style="width:1%;">
 						<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
@@ -702,8 +796,10 @@
 					<td align="center" style="width:12%;"><a id='lblWheel_s'> </a></td>	
 					<td align="center" style="width:12%;"><a id='lblNumber_s'> </a></td>				
 					<td align="center" style="width:10%;"><a id='lblBottom_s'> </a></td>
-					<td align="center" style="width:10%;"><a id='lblMount'> </a></td>				
+					<td align="center" style="width:10%;"><a id='lblMount_rs_s'>庫存數</a></td>
+					<td align="center" style="width:80px;"><a id='lblNob_rs_s'>作廢日期</a></td>	
 					<td align="center" ><a id='lblMemors2_s'> </a></td>
+					<td align="center" style="width:45px;"><a id='lblChgnoa_s'>移動</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center" >
@@ -722,7 +818,9 @@
 					</td>						
 					<td ><input id="txtBottom.*" type="text" class="num c1" style="width:98%;"/></td>
 					<td ><input id="txtMount.*" type="text" class="num c1" style="width:98%;"/></td>
+					<td ><input id="txtNob.*" type="text" class="c1" style="width:98%;"/></td>
 					<td><input id="txtMemo2.*" type="text" style="width:98%;" /></td>
+					<td align="center"><input id="checkChgnoa.*" name="chkchgnoa" type="checkbox"/></td>
 				</tr>
 			</table>
 		</div>
