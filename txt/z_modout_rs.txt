@@ -1,4 +1,4 @@
-z_modout_rs01:--z_modout_rs01
+﻿z_modout_rs01:--z_modout_rs01
 
 SET QUOTED_IDENTIFIER OFF
 
@@ -71,15 +71,23 @@ z_modout_rs02:--z_modout_rs02
 
 SET QUOTED_IDENTIFIER OFF
 
-declare @t_bnoa nvarchar(30)
-declare @t_enoa nvarchar(30)
+declare @t_bdate nvarchar(20)
+declare @t_edate nvarchar(20)
+declare @t_bnoa nvarchar(20)
+declare @t_enoa nvarchar(20)
+declare @t_bframe nvarchar(20)
+declare @t_eframe nvarchar(20)
 
-set @t_bnoa= case when '#non' = [3] then '' else [3] end
-set @t_enoa= case when '#non' = [4] then char(255) else [4] end
+set @t_bdate = case when '#non' = [7] then ''  else [7] end
+set @t_edate = case when '#non' = [8] then char(255) else [8] end
+set @t_bnoa = case when '#non' = [3] then ''  else [3] end
+set @t_enoa = case when '#non' = [4] then char(255) else [4] end
+set @t_bframe = case when '#non' = [10] then ''  else [10] end
+set @t_eframe = case when '#non' = [11] then char(255) else [11] end
 -----------------------------------------------------------------------------
 declare @tmp table(
 	gno nvarchar(1),
-	rec int,
+	rec int,	
 	noa nvarchar(50),
 	tgg nvarchar(50),
 	datea nvarchar(50),
@@ -97,7 +105,8 @@ declare @tmp table(
 	times float,
 	mount float,
 	mech  nvarchar(50),
-	worker  nvarchar(10)
+	worker  nvarchar(10),
+	total float
 )
 insert into @tmp(gno,rec,noa,tgg,datea,usetype,frame,code)
 select 
@@ -109,6 +118,8 @@ left join modfixs  c on b.productno = c.nob
 left join modfixcs  d on b.productno = d.nob
 left join modfixcs  e on b.productno = e.nob
 where (a.noa between @t_bnoa and @t_enoa)and
+	  (a.frame between @t_bframe and @t_eframe)and
+	  (a.datea between @t_bdate and @t_edate)and
 	  exists (select * from modfixs  where nob = b.productno)and
 	  exists (select * from modfixcs where nob = b.productno)and
 	  exists (select * from modouts  where nob = b.productno)
@@ -175,8 +186,8 @@ update @tmp set datea1 = dbo.split(datea1,'-',0)+'<br>'+dbo.split(datea1,'-',1)+
 update @tmp set datea1 = datea1+'<br>(出庫日期)' where gno = '3'
 
 --105/07/13 工時合計
-insert into @tmp(gno,rec,noa,times)
-select '4',MAX(rec)+1,noa,SUM(times) from @tmp group by noa
+insert into @tmp(gno,rec,noa,times,total)
+select '4',MAX(rec)+1,noa,SUM(times),SUM(weight) from @tmp group by noa
 
 --補空白行(25行)
 declare @cnt  int
@@ -214,11 +225,19 @@ z_modout_rs03:--z_modout_rs03
 
 SET QUOTED_IDENTIFIER OFF
 
-declare @t_bnob nvarchar(30)
-declare @t_enob nvarchar(30)
+declare @t_bdate nvarchar(20)
+declare @t_edate nvarchar(20)
+declare @t_bmodnoa nvarchar(20)
+declare @t_emodnoa nvarchar(20)
+declare @t_bframe nvarchar(20)
+declare @t_eframe nvarchar(20)
 
-set @t_bnob= case when '#non' = [5] then '' else [5] end
-set @t_enob= case when '#non' = [6] then char(255) else [6] end
+set @t_bdate = case when '#non' = [7] then ''  else [7] end
+set @t_edate = case when '#non' = [8] then char(255) else [8] end
+set @t_bmodnoa = case when '#non' = [3] then ''  else [3] end
+set @t_emodnoa = case when '#non' = [4] then char(255) else [4] end
+set @t_bframe = case when '#non' = [10] then ''  else [10] end
+set @t_eframe = case when '#non' = [11] then char(255) else [11] end
 ----------------------------------------------------------------------------
 declare @tmp table(
 	gno nvarchar(1),
@@ -243,7 +262,9 @@ insert into @tmp(gno,rec,modnoa,noa,nob,detail,class,weight,way,datea1,mount,mec
 select '1',ROW_NUMBER()over(order by a.noa),a.modnoa,a.noa,b.nob,b.detail1,'入庫維修',b.weight1,b.way1,a.datea,b.mount1,a.mech
 from modfix a
 left join modfixs b on a.noa=b.noa
-where nob between @t_bnob and @t_enob
+where a.modnoa between @t_bmodnoa and @t_emodnoa and
+a.datea between @t_bdate and @t_edate and
+a.frame between @t_bframe and @t_eframe
 
 declare @rec int
 declare @noa nvarchar(50)
@@ -315,7 +336,7 @@ begin
 		set @i   = @i   + 1
 	end
 	
-	fetch next from cursor_table 
+	fetch next from cursor_table
 	into @nob
 end 
 close cursor_table 
@@ -334,11 +355,17 @@ z_modout_rs04:--z_modout_rs04
 
 declare @t_bdate nvarchar(20)
 declare @t_edate nvarchar(20)
-declare @t_worker nvarchar(100)
+declare @t_bmodnoa nvarchar(20)
+declare @t_emodnoa nvarchar(20)
+declare @t_bframe nvarchar(20)
+declare @t_eframe nvarchar(20)
 
 set @t_bdate = case when '#non' = [7] then ''  else [7] end
 set @t_edate = case when '#non' = [8] then char(255) else [8] end
-set @t_worker = case when '#non' = [9] then '' else [9] end
+set @t_bmodnoa = case when '#non' = [3] then ''  else [3] end
+set @t_emodnoa = case when '#non' = [4] then char(255) else [4] end
+set @t_bframe = case when '#non' = [10] then ''  else [10] end
+set @t_eframe = case when '#non' = [11] then char(255) else [11] end
 ----------------------------------------------------------------------------
 declare @tmp table( 
 	gno nvarchar(1), 
@@ -357,6 +384,7 @@ declare @tmp table(
 	way nvarchar(30), 
 	b2edate nvarchar(50), 
 	mount float ,
+	fixmount float,
 	weight float, 
 	indate nvarchar(30)
 
@@ -365,49 +393,49 @@ declare @tmp table(
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),1
 ,a.datea,a.noa,a.mech,b.noq,b.worker,b.nob,b.detail,'維修'
-,b.bebottom,b.enbottom,b.way,b.bdate+'-'+b.btime+'~'+b.edate+'-'+b.etime,b.mount
+,b.bebottom,b.enbottom,b.way,b.bdate+'-'+b.btime+'~'+b.edate+'-'+b.etime,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
 left join modfixcs b on a.noa = b.noa 
 left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
-where(a.datea between @t_bdate and @t_edate) and (@t_worker = '' or b.worker = @t_worker) 
+where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
 
 --第1-2次
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),2
 ,a.datea,a.noa,a.mech,b.noq,b.worker3,b.nob,b.detail,'維修'
-,b.bebottom,b.enbottom,b.way3,b.bdate3+'-'+b.btime3+'~'+b.edate3+'-'+b.etime3,b.mount
+,b.bebottom,b.enbottom,b.way3,b.bdate3+'-'+b.btime3+'~'+b.edate3+'-'+b.etime3,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
 left join modfixcs b on a.noa = b.noa 
 left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
-where(a.datea between @t_bdate and @t_edate) and (@t_worker = '' or b.worker = @t_worker) 
+where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
 
 --第1-3次
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),3
 ,a.datea,a.noa,a.mech,b.noq,b.worker4,b.nob,b.detail,'維修'
-,b.bebottom,b.enbottom,b.way4,b.bdate4+'-'+b.btime4+'~'+b.edate4+'-'+b.etime4,b.mount
+,b.bebottom,b.enbottom,b.way4,b.bdate4+'-'+b.btime4+'~'+b.edate4+'-'+b.etime4,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
 left join modfixcs b on a.noa = b.noa 
 left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
-where(a.datea between @t_bdate and @t_edate) and (@t_worker = '' or b.worker = @t_worker) 
+where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
 
 --第2次--只有第一筆
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),4
 ,a.datea,a.noa,a.mech,b.noq,b.worker2,b.nob,b.detail,'維修'
-,b.bebottom,b.enbottom,b.way2,b.bdate2+'-'+b.btime2+'~'+b.edate2+'-'+b.etime2,b.mount
+,b.bebottom,b.enbottom,b.way2,b.bdate2+'-'+b.btime2+'~'+b.edate2+'-'+b.etime2,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
 left join modfixcs b on a.noa = b.noa 
 left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
-where(a.datea between @t_bdate and @t_edate) and (@t_worker = '' or b.worker = @t_worker) 
+where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
 and b.noq=(select MIN(noq) from modfixcs where noa=a.noa)
 
 update a
@@ -451,13 +479,19 @@ select * from @tmp order by datea,rec;
 --**************************************************************************
 z_modout_rs05:--z_modout_rs05
 
-declare @t_bmodnoa nvarchar(50)
-declare @t_emodnoa nvarchar(50)
-declare @t_frame nvarchar(50)
+declare @t_bdate nvarchar(20)
+declare @t_edate nvarchar(20)
+declare @t_bmodnoa nvarchar(20)
+declare @t_emodnoa nvarchar(20)
+declare @t_bframe nvarchar(20)
+declare @t_eframe nvarchar(20)
 
-set @t_bmodnoa= case when '#non' = [3] then '' else [3] end
-set @t_emodnoa= case when '#non' = [4] then char(255) else [4] end
-set @t_frame = case when '#non' = [10] then '' else [10] end
+set @t_bdate = case when '#non' = [7] then ''  else [7] end
+set @t_edate = case when '#non' = [8] then char(255) else [8] end
+set @t_bmodnoa = case when '#non' = [3] then ''  else [3] end
+set @t_emodnoa = case when '#non' = [4] then char(255) else [4] end
+set @t_bframe = case when '#non' = [10] then ''  else [10] end
+set @t_eframe = case when '#non' = [11] then char(255) else [11] end
 ----------------------------------------------------------------------------
 declare @tmp table(
 	gno nvarchar(1),
@@ -483,9 +517,9 @@ select
 	,isnull((select datea from modfix where noa=a.innoa),'') indate,b.mount,b.worker
 from modfixc a
 left join modfixcs b on a.noa = b.noa
-where(a.modnoa between @t_bmodnoa and @t_emodnoa) and (LEN(@t_frame)=0 or b.frame=@t_frame) and
+where(a.modnoa between @t_bmodnoa and @t_emodnoa) and (b.frame between @t_bframe and @t_eframe) and (a.datea between @t_bdate and @t_edate) and
 	 (ISNULL(b.fixmount,0)=0 and ISNULL(b.bebottom,0)=0 and ISNULL(b.enbottom,0)=0 and LEN(ISNULL(b.bdate,''))=0 and LEN(ISNULL(b.edate,''))=0)
-	 and isnull(a.enda,0)=0
+	 and isnull(a.enda,0)=0 and isnull(a.fixed,0)=1
 --group by a.modnoa,b.frame,b.nob,b.detail,a.mech,b.way,a.innoa
 
 --補空白行(25行)
@@ -525,7 +559,7 @@ z_modout_rs06:--z_modout_rs06
 
 declare @t_date nvarchar(10) 
 
-set @t_date = case when '#non' = [11] then ''  else [11] end
+set @t_date = case when '#non' = [12] then ''  else [12] end
 ----------------------------------------------------------------------------
 SET QUOTED_IDENTIFIER OFF
 
@@ -822,9 +856,17 @@ SET QUOTED_IDENTIFIER OFF
 
 declare @t_bdate nvarchar(20)
 declare @t_edate nvarchar(20)
+declare @t_bmodnoa nvarchar(20)
+declare @t_emodnoa nvarchar(20)
+declare @t_bframe nvarchar(20)
+declare @t_eframe nvarchar(20)
 
 set @t_bdate = case when '#non' = [7] then ''  else [7] end
 set @t_edate = case when '#non' = [8] then char(255) else [8] end
+set @t_bmodnoa = case when '#non' = [3] then ''  else [3] end
+set @t_emodnoa = case when '#non' = [4] then char(255) else [4] end
+set @t_bframe = case when '#non' = [10] then ''  else [10] end
+set @t_eframe = case when '#non' = [11] then char(255) else [11] end
 ----------------------------------------------------------------------------
 declare @tmp table(
 	gno nvarchar(1),
@@ -840,7 +882,8 @@ declare @tmp table(
 	mount2 float,
 	weight2 float,
 	mech nvarchar(40),
-	worker nvarchar(50)
+	worker nvarchar(50),
+	way nvarchar(30)
 )
 insert into @tmp
 select 
@@ -851,11 +894,13 @@ select
 	case when LEFT(b.detail,3)='定徑段' then b.frame  else null end,
 	case when LEFT(b.detail,3)='定徑段' then SUM(b.fixmount)  else null end,
 	case when LEFT(b.detail,3)='定徑段' then SUM(b.weight) else null end,
-	a.mech,b.worker
+	a.mech,b.worker,b.way
 from modfixc a 
 left join modfixcs b on a.noa = b.noa
-where (LEFT(bdate,9) between @t_bdate and @t_edate) and (fixmount > 0)
-group by LEFT(bdate,9),b.mech,b.detail,b.nob,b.frame,a.mech,b.worker
+where (LEFT(bdate,9) between @t_bdate and @t_edate) and (fixmount > 0) and 
+a.modnoa between @t_bmodnoa and @t_emodnoa and
+a.frame between @t_bframe and @t_eframe
+group by LEFT(bdate,9),b.mech,b.detail,b.nob,b.frame,a.mech,b.worker,b.way
 
 --補空白行
 declare @bdate nvarchar(10)
@@ -865,7 +910,7 @@ declare @max int
 declare @i int
 
 declare cursor_table cursor for 
-select bdate from @tmp group by bdate 
+select bdate from @tmp group by bdate
 open cursor_table 
 fetch next from cursor_table 
 into @bdate

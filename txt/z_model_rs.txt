@@ -1,4 +1,4 @@
-z_model_rs1:--z_model_rs1
+﻿z_model_rs1:--z_model_rs1
 
 declare @t_bdate nvarchar(30)
 declare @t_edate nvarchar(30)
@@ -160,11 +160,15 @@ declare @t_bdate nvarchar(30)
 declare @t_edate nvarchar(30)
 declare @t_bnoa nvarchar(20)
 declare @t_enoa nvarchar(20)
+declare @t_bframe nvarchar(20)
+declare @t_eframe nvarchar(20)
 
 set @t_bdate = case when '#non' = [1] then '' else [1] end
 set @t_edate = case when '#non' = [2] then char(255) else [2] end
 set @t_bnoa = case when '#non' = [3] then '' else [3] end
 set @t_enoa = case when '#non' = [4] then char(255) else [4] end
+set @t_bframe = case when '#non' = [5] then '' else [5] end
+set @t_eframe = case when '#non' = [6] then char(255) else [6] end
 -------------------------------------------------------------------------------------------------------
 declare @result table(
 	gno nvarchar(1),
@@ -192,7 +196,7 @@ select '0',ROW_NUMBER()over(partition by a.noa order by a.noa),a.noa,a.tgg,a.tub
 	   b.productno, case when b.model = '1' then '成型段' else '定徑段' end model
 	   ,b.wheel+b.number,b.bottom,b.mount,b.memo2,b.datea
 from model a left join models b on a.noa=b.noa
-where (a.datea between @t_bdate and @t_edate) and (a.noa between @t_bnoa and @t_enoa)
+where (a.datea between @t_bdate and @t_edate) and (a.noa between @t_bnoa and @t_enoa) and (a.frame between @t_bframe and @t_eframe)
 
 --補滿行數
 declare @noa nvarchar(30)
