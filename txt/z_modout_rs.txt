@@ -262,8 +262,9 @@ insert into @tmp(gno,rec,modnoa,noa,nob,detail,class,weight,way,datea1,mount,mec
 select '1',ROW_NUMBER()over(order by a.noa),a.modnoa,a.noa,b.nob,b.detail1,'入庫維修',b.weight1,b.way1,a.datea,b.mount1,a.mech
 from modfix a
 left join modfixs b on a.noa=b.noa
+left join model c on a.modnoa = c.noa
 where a.modnoa between @t_bmodnoa and @t_emodnoa and
-a.datea between @t_bdate and @t_edate and
+c.datea between @t_bdate and @t_edate and
 a.frame between @t_bframe and @t_eframe
 
 declare @rec int
