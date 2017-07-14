@@ -106,7 +106,8 @@ declare @tmp table(
 	mount float,
 	mech  nvarchar(50),
 	worker  nvarchar(10),
-	total float
+	total float,
+	t_times float
 )
 insert into @tmp(gno,rec,noa,tgg,datea,usetype,frame,code)
 select 
@@ -218,6 +219,13 @@ begin
 end 
 close cursor_table 
 deallocate cursor_table
+
+update a
+SET total=b.total
+,t_times=b.times
+ from @tmp a
+ outer apply (select * from @tmp where gno='4' and noa=a.noa)b
+where a.gno='0'
 
 select * from @tmp order by noa,rec;
 --**************************************************************************
