@@ -565,21 +565,20 @@ deallocate cursor_table
 select * from @tmp order by modnoa,rec;
 --**************************************************************************
 z_modout_rs06:--z_modout_rs06
-
-declare @t_date nvarchar(10) 
-
+declare @t_date nvarchar(10)
 set @t_date = case when '#non' = [12] then ''  else [12] end
 ----------------------------------------------------------------------------
 SET QUOTED_IDENTIFIER OFF
 
 declare @tmp table(
+	test nvarchar(10),
 	gno nvarchar(40),
 	rec int,
 	mech1 float,
 	mech2 float,
 	mech3 float,
 	mech4 float,
-	mech5 float,
+	mech5 float, 
 	mech6 float,
 	mech7 float,
 	mech8 float,
@@ -757,7 +756,7 @@ set @gno = @gno+1
 set @cmd = "select "+CAST(@gno as nvarchar(5))+",7,"
 while(@j < 9)
 begin
-	set @cmd = @cmd + "isnull((select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(5,1))) from(
+	set @cmd = @cmd + "isnull((select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(10,1))) from(
 							select mech,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+btime bdate,CAST(dbo.ChineseEraName2AD(LEFT(edate,9))as nvarchar(10))+' '+etime edate
 							from modfixcs 
 							where (worktype='加班')and
@@ -766,7 +765,7 @@ begin
 								  (LEFT(bdate,9)='"+@t_date+"' and LEFT(edate,9)='"+@t_date+"')
 							)t
 						group by mech),0)
-						+isnull((select SUM(CAST(DATEDIFF(mi,bdate2,edate2)/60.0 as numeric(5,1))) from(
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate2,edate2)/60.0 as numeric(10,1))) from(
 							select mech2,CAST(dbo.ChineseEraName2AD(LEFT(bdate2,9))as nvarchar(10))+' '+btime2 bdate2,CAST(dbo.ChineseEraName2AD(LEFT(edate2,9))as nvarchar(10))+' '+etime2 edate2
 							from modfixcs 
 							where (worktype2='加班')and
@@ -775,7 +774,7 @@ begin
 								  (LEFT(bdate2,9)='"+@t_date+"' and LEFT(edate2,9)='"+@t_date+"')
 							)t
 						group by mech2),0)
-						+isnull((select SUM(CAST(DATEDIFF(mi,bdate3,edate3)/60.0 as numeric(5,1))) from(
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate3,edate3)/60.0 as numeric(10,1))) from(
 							select mech3,CAST(dbo.ChineseEraName2AD(LEFT(bdate3,9))as nvarchar(10))+' '+btime3 bdate3,CAST(dbo.ChineseEraName2AD(LEFT(edate3,9))as nvarchar(10))+' '+etime3 edate3
 							from modfixcs 
 							where (worktype3='加班')and
@@ -784,7 +783,7 @@ begin
 								  (LEFT(bdate3,9)='"+@t_date+"' and LEFT(edate3,9)='"+@t_date+"')
 							)t
 						group by mech3),0)
-						+isnull((select SUM(CAST(DATEDIFF(mi,bdate4,edate4)/60.0 as numeric(5,1))) from(
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate4,edate4)/60.0 as numeric(10,1))) from(
 							select mech4,CAST(dbo.ChineseEraName2AD(LEFT(bdate4,9))as nvarchar(10))+' '+btime4 bdate4,CAST(dbo.ChineseEraName2AD(LEFT(edate4,9))as nvarchar(10))+' '+etime4 edate4
 							from modfixcs 
 							where (worktype4='加班')and
@@ -805,7 +804,7 @@ set @gno = @gno+1
 set @cmd = "select "+CAST(@gno as nvarchar(5))+",8,"
 while(@j < 9)
 begin
-	set @cmd = @cmd + "isnull((select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(5,1))) from(
+	set @cmd = @cmd + "isnull((select SUM(CAST(DATEDIFF(mi,bdate,edate)/60.0 as numeric(10,1))) from(
 							select mech,CAST(dbo.ChineseEraName2AD(LEFT(bdate,9))as nvarchar(10))+' '+btime bdate,CAST(dbo.ChineseEraName2AD(LEFT(edate,9))as nvarchar(10))+' '+etime edate
 							from modfixcs 
 							where (worktype='加班')and
@@ -814,7 +813,7 @@ begin
 								  (LEFT(bdate,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
 							)t
 						group by mech),0)
-						+isnull((select SUM(CAST(DATEDIFF(mi,bdate2,edate2)/60.0 as numeric(5,1))) from(
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate2,edate2)/60.0 as numeric(10,1))) from(
 							select mech2,CAST(dbo.ChineseEraName2AD(LEFT(bdate2,9))as nvarchar(10))+' '+btime2 bdate2,CAST(dbo.ChineseEraName2AD(LEFT(edate2,9))as nvarchar(10))+' '+etime2 edate2
 							from modfixcs 
 							where (worktype2='加班')and
@@ -823,7 +822,7 @@ begin
 								  (LEFT(bdate2,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
 							)t
 						group by mech2),0)
-						+isnull((select SUM(CAST(DATEDIFF(mi,bdate3,edate3)/60.0 as numeric(5,1))) from(
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate3,edate3)/60.0 as numeric(10,1))) from(
 							select mech3,CAST(dbo.ChineseEraName2AD(LEFT(bdate3,9))as nvarchar(10))+' '+btime3 bdate3,CAST(dbo.ChineseEraName2AD(LEFT(edate3,9))as nvarchar(10))+' '+etime3 edate3
 							from modfixcs 
 							where (worktype3='加班')and
@@ -832,7 +831,7 @@ begin
 								  (LEFT(bdate3,9) between LEFT('"+@t_date+"',6)+'/01' and '"+@t_date+"') 
 							)t
 						group by mech3),0)
-						+isnull((select SUM(CAST(DATEDIFF(mi,bdate4,edate4)/60.0 as numeric(5,1))) from(
+						+isnull((select SUM(CAST(DATEDIFF(mi,bdate4,edate4)/60.0 as numeric(10,1))) from(
 							select mech4,CAST(dbo.ChineseEraName2AD(LEFT(bdate4,9))as nvarchar(10))+' '+btime4 bdate4,CAST(dbo.ChineseEraName2AD(LEFT(edate4,9))as nvarchar(10))+' '+etime4 edate4
 							from modfixcs 
 							where (worktype4='加班')and
