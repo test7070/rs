@@ -368,9 +368,11 @@ declare @t_bmodnoa nvarchar(20)
 declare @t_emodnoa nvarchar(20)
 declare @t_bframe nvarchar(20)
 declare @t_eframe nvarchar(20)
+declare @t_worker nvarchar(20)
 
 set @t_bdate = case when '#non' = [7] then ''  else [7] end
 set @t_edate = case when '#non' = [8] then char(255) else [8] end
+set @t_worker = case when '#non' = [9] then char(255) else [9] end
 set @t_bmodnoa = case when '#non' = [3] then ''  else [3] end
 set @t_emodnoa = case when '#non' = [4] then char(255) else [4] end
 set @t_bframe = case when '#non' = [10] then ''  else [10] end
@@ -408,7 +410,8 @@ from modfixc a
 left join modfixcs b on a.noa = b.noa 
 left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
-where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
+where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe)
+and (b.worker like '%'+@t_worker+'%')
 
 --第1-2次
 insert into @tmp 
@@ -420,7 +423,8 @@ from modfixc a
 left join modfixcs b on a.noa = b.noa 
 left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
-where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
+where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe)
+and (b.worker3 like '%'+@t_worker+'%') 
 
 --第1-3次
 insert into @tmp 
@@ -432,7 +436,8 @@ from modfixc a
 left join modfixcs b on a.noa = b.noa 
 left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
-where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
+where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe)
+and (b.worker4 like '%'+@t_worker+'%')  
 
 --第2次--只有第一筆
 insert into @tmp 
@@ -446,6 +451,7 @@ left join modfixs c on b.nob = c.nob and a.innoa=c.noa
 left join modfix d on c.noa=b.noa
 where(a.datea between @t_bdate and @t_edate) and (a.modnoa between @t_bmodnoa and @t_emodnoa) and (a.frame between @t_bframe and @t_eframe) 
 and b.noq=(select MIN(noq) from modfixcs where noa=a.noa)
+and (b.worker2 like '%'+@t_worker+'%')
 
 update a
 set rec=rr
