@@ -1228,7 +1228,8 @@ left join modfixcs b on a.noa = b.noa
 left join model c on a.modnoa = c.noa
 where a.datea between @bdate and @edate and b.noq=(select MIN(noq) from modfixcs where noa=a.noa) and c.noa between @bmodnoa and @emodnoa and c.frame between @bframe and @eframe 
 group by a.noa,a.datea,b.worker2,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime2,b.etime2,c.usetype
-
+/*
+107/05/18 省紙張不空白
 --補空白行(25行)
 declare @fixdate nvarchar(100)
 declare @cnt  int
@@ -1256,8 +1257,7 @@ begin
 end 
 close cursor_table 
 deallocate cursor_table
-
-
+*/
 update @tmp set betime='' where betime='~'
 
 select a.*,fixdate as datea from @tmp a order by fixdate,gno,noa,mount desc,nob,noq;
