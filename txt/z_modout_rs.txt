@@ -403,7 +403,7 @@ declare @tmp table(
 --第1次
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),1
-,a.datea,a.noa,a.mech,b.noq,b.worker,b.nob,b.detail,'維修'
+,a.datea,a.noa,b.mech,b.noq,b.worker,b.nob,b.detail,'維修'
 ,b.bebottom,b.enbottom,b.way,b.bdate+'-'+b.btime+'~'+b.edate+'-'+b.etime,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
@@ -416,7 +416,7 @@ and (b.worker like '%'+@t_worker+'%')
 --第1-2次
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),2
-,a.datea,a.noa,a.mech,b.noq,b.worker3,b.nob,b.detail,'維修'
+,a.datea,a.noa,b.mech,b.noq,b.worker3,b.nob,b.detail,'維修'
 ,b.bebottom,b.enbottom,b.way3,b.bdate3+'-'+b.btime3+'~'+b.edate3+'-'+b.etime3,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
@@ -429,7 +429,7 @@ and (b.worker3 like '%'+@t_worker+'%')
 --第1-3次
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),3
-,a.datea,a.noa,a.mech,b.noq,b.worker4,b.nob,b.detail,'維修'
+,a.datea,a.noa,b.mech,b.noq,b.worker4,b.nob,b.detail,'維修'
 ,b.bebottom,b.enbottom,b.way4,b.bdate4+'-'+b.btime4+'~'+b.edate4+'-'+b.etime4,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
@@ -442,7 +442,7 @@ and (b.worker4 like '%'+@t_worker+'%')
 --第2次--只有第一筆
 insert into @tmp 
 select '1',ROW_NUMBER()over(partition by a.datea order by b.worker),4
-,a.datea,a.noa,a.mech,b.noq,b.worker2,b.nob,b.detail,'維修'
+,a.datea,a.noa,b.mech,b.noq,b.worker2,b.nob,b.detail,'維修'
 ,b.bebottom,b.enbottom,b.way2,b.bdate2+'-'+b.btime2+'~'+b.edate2+'-'+b.etime2,b.mount,b.fixmount
 ,c.weight1,d.datea
 from modfixc a 
@@ -528,14 +528,14 @@ declare @tmp table(
 insert into @tmp
 select 
 	'1',ROW_NUMBER()over(partition by a.modnoa order by b.nob),a.modnoa,b.frame,b.nob,
-	b.detail,'維修',a.mech,b.weight,b.bebottom,b.enbottom,b.way
+	b.detail,'維修',b.mech,b.weight,b.bebottom,b.enbottom,b.way
 	,isnull((select datea from modfix where noa=a.innoa),'') indate,b.mount,b.worker
 from modfixc a
 left join modfixcs b on a.noa = b.noa
 where(a.modnoa between @t_bmodnoa and @t_emodnoa) and (b.frame between @t_bframe and @t_eframe) and (a.datea between @t_bdate and @t_edate) and
 	 (ISNULL(b.fixmount,0)=0 and ISNULL(b.bebottom,0)=0 and ISNULL(b.enbottom,0)=0 and LEN(ISNULL(b.bdate,''))=0 and LEN(ISNULL(b.edate,''))=0)
 	 and isnull(a.enda,0)=0 and isnull(a.fixed,0)=1
---group by a.modnoa,b.frame,b.nob,b.detail,a.mech,b.way,a.innoa
+--group by a.modnoa,b.frame,b.nob,b.detail,b.mech,b.way,a.innoa
 
 --補空白行(25行)
 declare @modnoa  nvarchar(50)
@@ -1188,46 +1188,46 @@ declare @tmp table(
 	class nvarchar(30)
 )
 insert into @tmp (gno,noa,noq,fixdate,fixer,mach,Spec,nob,bebottom,enbottom,mount,betime,times,class)
-select '1',a.noa,'1',a.datea,b.worker,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime + '~' + b.etime,
+select '1',a.noa,'1',a.datea,b.worker,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime + '~' + b.etime,
 isnull(ROUND(sum((DATEDIFF(minute,CAST(dbo.ChineseEraName2AD(b.bdate)as nvarchar(20))+' '+b.btime ,CAST(dbo.ChineseEraName2AD(b.edate)as nvarchar(20))+' '+b.etime))/60.0),1),0),
 case when c.usetype = 1 then '設備課' else '製造課' end
 from modfixc a
 left join modfixcs b on a.noa = b.noa
 left join model c on a.modnoa = c.noa
 where a.datea between @bdate and @edate and c.noa between @bmodnoa and @emodnoa and c.frame between @bframe and @eframe
-group by a.noa,a.datea,b.worker,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime,b.etime,c.usetype
+group by a.noa,a.datea,b.worker,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime,b.etime,c.usetype
 
 insert into @tmp (gno,noa,noq,fixdate,fixer,mach,Spec,nob,bebottom,enbottom,mount,betime,times,class)
-select '1',a.noa,'2',a.datea,b.worker3,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime3+'~'+b.etime3,
+select '1',a.noa,'2',a.datea,b.worker3,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime3+'~'+b.etime3,
 isnull(ROUND(sum((DATEDIFF(minute,CAST(dbo.ChineseEraName2AD(b.bdate3)as nvarchar(20))+' '+b.btime3 ,CAST(dbo.ChineseEraName2AD(b.edate3)as nvarchar(20))+' '+b.etime3))/60.0),1),0),
 case when c.usetype = 1 then '設備課' else '製造課' end
 from modfixc a
 left join modfixcs b on a.noa = b.noa
 left join model c on a.modnoa = c.noa
 where a.datea between @bdate and @edate and c.noa between @bmodnoa and @emodnoa and c.frame between @bframe and @eframe
-group by a.noa,a.datea,b.worker3,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime3,b.etime3,c.usetype
+group by a.noa,a.datea,b.worker3,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime3,b.etime3,c.usetype
 
 
 insert into @tmp (gno,noa,noq,fixdate,fixer,mach,Spec,nob,bebottom,enbottom,mount,betime,times,class)
-select '1',a.noa,'3',a.datea,b.worker4,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime4+'~'+b.etime4,
+select '1',a.noa,'3',a.datea,b.worker4,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime4+'~'+b.etime4,
 isnull(ROUND(sum((DATEDIFF(minute,CAST(dbo.ChineseEraName2AD(b.bdate4)as nvarchar(20))+' '+b.btime4 ,CAST(dbo.ChineseEraName2AD(b.edate4)as nvarchar(20))+' '+b.etime4))/60.0),1),0),
 case when c.usetype = 1 then '設備課' else '製造課' end
 from modfixc a
 left join modfixcs b on a.noa = b.noa
 left join model c on a.modnoa = c.noa
 where a.datea between @bdate and @edate and c.noa between @bmodnoa and @emodnoa and c.frame between @bframe and @eframe
-group by a.noa,a.datea,b.worker4,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime4,b.etime4,c.usetype
+group by a.noa,a.datea,b.worker4,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime4,b.etime4,c.usetype
 
 
 insert into @tmp (gno,noa,noq,fixdate,fixer,mach,Spec,nob,bebottom,enbottom,mount,betime,times,class)
-select '1',a.noa,'4',a.datea,b.worker2,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime2+'~'+b.etime2,
+select '1',a.noa,'4',a.datea,b.worker2,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime2+'~'+b.etime2,
 isnull(ROUND(sum(DATEDIFF(minute,CAST(dbo.ChineseEraName2AD(b.bdate2)as nvarchar(20))+' '+b.btime2 ,CAST(dbo.ChineseEraName2AD(b.edate2)as nvarchar(20))+' '+b.etime2)/60.0),1),0),
 case when c.usetype = 1 then '設備課' else '製造課' end
 from modfixc a
 left join modfixcs b on a.noa = b.noa
 left join model c on a.modnoa = c.noa
 where a.datea between @bdate and @edate and b.noq=(select MIN(noq) from modfixcs where noa=a.noa) and c.noa between @bmodnoa and @emodnoa and c.frame between @bframe and @eframe 
-group by a.noa,a.datea,b.worker2,a.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime2,b.etime2,c.usetype
+group by a.noa,a.datea,b.worker2,b.mech,c.spec,b.detail,b.bebottom,b.enbottom,b.fixmount,b.btime2,b.etime2,c.usetype
 /*
 107/05/18 省紙張不空白
 --補空白行(25行)
